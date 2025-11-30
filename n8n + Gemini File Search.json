@@ -1,0 +1,599 @@
+{
+  "name": "Gemini File Search",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Doc Upload",
+        "formDescription": "upload file ",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "File",
+              "fieldType": "file",
+              "acceptFileTypes": ".pdf",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        1360,
+        96
+      ],
+      "id": "87830006-ee7a-4f33-9d1b-ad0bc58c405f",
+      "name": "On form submission",
+      "webhookId": "2e20e6c8-8736-44d5-83c5-a9f2eae405f4"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        736,
+        96
+      ],
+      "id": "92d7e5b4-08a0-4b20-8bed-4d417c48080e",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/fileSearchStores",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "displayName",
+              "value": "youtube-demo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        928,
+        96
+      ],
+      "id": "f09d5a7e-da37-4bea-a462-4e905a9e13c4",
+      "name": "Create File Store",
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "SRZM2W1aYSmqSRSb",
+          "name": "gemini-youtube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://generativelanguage.googleapis.com/upload/v1beta/files",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "File",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1600,
+        96
+      ],
+      "id": "6779bd1d-f479-4f43-8ea8-0cb4d6d6bbfc",
+      "name": "Upload File",
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "SRZM2W1aYSmqSRSb",
+          "name": "gemini-youtube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://generativelanguage.googleapis.com/v1beta/fileSearchStores/youtubedemo-zmdmtktgxhit:importFile",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "file_name",
+              "value": "={{ $json.file.name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1776,
+        96
+      ],
+      "id": "b7733e86-4c61-4897-856c-3b3f65f35a88",
+      "name": "Import File",
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "SRZM2W1aYSmqSRSb",
+          "name": "gemini-youtube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "source": "googleSheets",
+        "documentId": {
+          "__rl": true,
+          "value": "1zf9jK8OdSrV4qMLwBjqrfML2tPx2SJmdqmxa4QN5TXU",
+          "mode": "list",
+          "cachedResultName": "RAG Evaluation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zf9jK8OdSrV4qMLwBjqrfML2tPx2SJmdqmxa4QN5TXU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zf9jK8OdSrV4qMLwBjqrfML2tPx2SJmdqmxa4QN5TXU/edit#gid=0"
+        }
+      },
+      "type": "n8n-nodes-base.evaluationTrigger",
+      "typeVersion": 4.7,
+      "position": [
+        1376,
+        464
+      ],
+      "id": "37d69c39-0a6a-4b31-b32c-25b1ccbe7f99",
+      "name": "When fetching a dataset row",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        2064,
+        608
+      ],
+      "id": "f6620178-06ce-424e-8412-6a0948b32e01",
+      "name": "GPT",
+      "credentials": {
+        "openRouterApi": {
+          "id": "edVjNyoZjRbyMFtP",
+          "name": "OpenRouter account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## 1. Create Store",
+        "height": 288,
+        "width": 608,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        592,
+        0
+      ],
+      "id": "c16839c8-520d-47fc-982a-f255168caa95",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "##  2. Upload File\n",
+        "height": 288,
+        "width": 704,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        0
+      ],
+      "id": "f11dae65-8bdc-4114-8191-32c3b6180ad3",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        608,
+        432
+      ],
+      "id": "26c886c4-ca5d-4be2-8751-59aa6e742fb8",
+      "name": "When chat message received",
+      "webhookId": "f61815ce-f800-4913-a5d3-69303910022f"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-5-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        752,
+        560
+      ],
+      "id": "111afa96-6bca-4f1e-8b69-a0c4c3e8a7a7",
+      "name": "OpenRouter",
+      "credentials": {
+        "openRouterApi": {
+          "id": "edVjNyoZjRbyMFtP",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-5-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        592
+      ],
+      "id": "7fe99be4-5b3c-4aa5-96f5-7019e0d25666",
+      "name": "OpenRouter1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "edVjNyoZjRbyMFtP",
+          "name": "OpenRouter account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "##  Query\n",
+        "height": 352,
+        "width": 1152,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        368
+      ],
+      "id": "ae430adb-6caf-4225-83c2-75fef6b6f6d1",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        { \"text\": \"{{ $fromAI(\"query\",\"the question the user needs an answer to\") }}\" }\n      ]\n    }\n  ],\n  \"tools\": [\n    {\n      \"file_search\": {\n        \"file_search_store_names\": [\n          \"YOUR FILE STORE\"\n        ]\n      }\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        1808,
+        592
+      ],
+      "id": "eaa2e105-ad30-4a4d-8180-3306f5a2f885",
+      "name": "Knowledge Base1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        { \"text\": \"{{ $fromAI(\"query\",\"the question the user needs an answer to\") }}\" }\n      ]\n    }\n  ],\n  \"tools\": [\n    {\n      \"file_search\": {\n        \"file_search_store_names\": [\n          \"fileSearchStores/youtubedemo-zmdmtktgxhit\"\n        ]\n      }\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        1136,
+        544
+      ],
+      "id": "cdb5c1b9-723c-443b-aecb-d0b962c51ec2",
+      "name": "Knowledge Base",
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "SRZM2W1aYSmqSRSb",
+          "name": "gemini-youtube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a helpful RAG agent. Your job is to answer the user's question using your Knowledge Base tool to make sure all of your answers are grounded in truth. Please cite your sources when you're giving your answers. \n\nWhen you are sending a query to the Knowledge Base tool, only send over text. No punctuation, quotation marks, or new lines. "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        816,
+        432
+      ],
+      "id": "f4859e79-2e75-4d3c-93cd-626090091055",
+      "name": "RAG Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.Input }}",
+        "options": {
+          "systemMessage": "=You are a helpful RAG agent. Your job is to answer the user's question using your Knowledge Base tool to make sure all of your answers are grounded in truth. Please cite your sources when you're giving your answers. \n\nWhen you are sending a query to the Knowledge Base tool, only send over text. No punctuation, quotation marks, or new lines. "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1584,
+        464
+      ],
+      "id": "56502bf2-c53b-453d-b1f1-418493902f49",
+      "name": "Eval Agent"
+    },
+    {
+      "parameters": {
+        "source": "googleSheets",
+        "documentId": {
+          "__rl": true,
+          "value": "1zf9jK8OdSrV4qMLwBjqrfML2tPx2SJmdqmxa4QN5TXU",
+          "mode": "list",
+          "cachedResultName": "RAG Evaluation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zf9jK8OdSrV4qMLwBjqrfML2tPx2SJmdqmxa4QN5TXU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ENf2i6156U9Y0mWG6ymhfmAv8sbsz7o7x9m3J21SZWM/edit#gid=0"
+        },
+        "outputs": {
+          "values": [
+            {
+              "outputName": "Score",
+              "outputValue": "={{ $json.Correctness }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.8,
+      "position": [
+        2208,
+        464
+      ],
+      "id": "d077c9f5-114b-4e49-a28b-37cd695e4264",
+      "name": "Set Metrics",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "setMetrics",
+        "expectedAnswer": "={{ $('When fetching a dataset row').item.json['Expected Answer'] }}",
+        "actualAnswer": "={{ $json.output }}",
+        "prompt": "=You are an expert factual evaluator assessing the accuracy of answers compared to established ground truths.\n\nEvaluate the factual correctness of a given output compared to the provided ground truth on a scale from 1 to 5. Use detailed reasoning to thoroughly analyze all claims before determining the final score.\n\n# Scoring Criteria\n\n- 5: Highly similar - The output and ground truth are nearly identical, with only minor, insignificant differences.\n- 4: Somewhat similar - The output is largely similar to the ground truth but has few noticeable differences.\n- 3: Moderately similar - There are some evident differences, but the core essence is captured in the output.\n- 2: Slightly similar - The output only captures a few elements of the ground truth and contains several differences.\n- 1: Not similar - The output is significantly different from the ground truth, with few or no matching elements.\n\n# Evaluation Steps\n\n1. Identify and list the key elements present in both the output and the ground truth.\n2. Compare these key elements to evaluate their similarities and differences, considering both content and structure.\n3. Analyze the semantic meaning conveyed by both the output and the ground truth, noting any significant deviations.\n4. Consider factual accuracy of specific details, including names, dates, numbers, and relationships.\n5. Assess whether the output maintains the factual integrity of the ground truth, even if phrased differently.\n6. Determine the overall level of similarity and accuracy according to the defined criteria.\n\n# Output Format\n\nProvide:\n- A detailed analysis of the comparison (extended reasoning)\n- A one-sentence summary highlighting key differences (not similarities)\n- The final similarity score as an integer (1, 2, 3, 4, or 5)\n\nAlways follow the JSON format below and return nothing else:\n{\n  \"extended_reasoning\": \"<detailed step-by-step analysis of factual accuracy and similarity>\",\n  \"reasoning_summary\": \"<one sentence summary focusing on key differences>\",\n  \"score\": <number: integer from 1 to 5>\n}\n\n# Examples\n\n**Example 1:**\n\nInput:\n- Output: \"The cat sat on the mat.\"\n- Ground Truth: \"The feline is sitting on the rug.\"\n\nExpected Output:\n{\n  \"extended_reasoning\": \"I need to compare 'The cat sat on the mat' with 'The feline is sitting on the rug.' First, let me identify the key elements: both describe an animal ('cat' vs 'feline') in a position ('sat' vs 'sitting') on a surface ('mat' vs 'rug'). The subject is semantically identical - 'cat' and 'feline' refer to the same animal. The action is also semantically equivalent - 'sat' and 'sitting' both describe the same position, though one is past tense and one is present continuous. The location differs in specific wording ('mat' vs 'rug') but both refer to floor coverings that serve the same function. The basic structure and meaning of both sentences are preserved, though they use different vocabulary and slightly different tense. The core information being conveyed is the same, but there are noticeable wording differences.\",\n  \"reasoning_summary\": \"The sentences differ in vocabulary choice ('cat' vs 'feline', 'mat' vs 'rug') and verb tense ('sat' vs 'is sitting').\",\n  \"score\": 3\n}\n\n**Example 2:**\n\nInput:\n- Output: \"The quick brown fox jumps over the lazy dog.\"\n- Ground Truth: \"A fast brown animal leaps over a sleeping canine.\"\n\nExpected Output:\n{\n  \"extended_reasoning\": \"I need to compare 'The quick brown fox jumps over the lazy dog' with 'A fast brown animal leaps over a sleeping canine.' Starting with the subjects: 'quick brown fox' vs 'fast brown animal'. Both describe the same entity (a fox is a type of animal) with the same attributes (quick/fast and brown). The action is described as 'jumps' vs 'leaps', which are synonymous verbs describing the same motion. The object in both sentences is a dog, described as 'lazy' in one and 'sleeping' in the other, which are related concepts (a sleeping dog could be perceived as lazy). The structure follows the same pattern: subject + action + over + object. The sentences convey the same scene with slightly different word choices that maintain the core meaning. The level of specificity differs slightly ('fox' vs 'animal', 'dog' vs 'canine'), but the underlying information and imagery remain very similar.\",\n  \"reasoning_summary\": \"The sentences use different but synonymous terminology ('quick' vs 'fast', 'jumps' vs 'leaps', 'lazy' vs 'sleeping') and varying levels of specificity ('fox' vs 'animal', 'dog' vs 'canine').\",\n  \"score\": 4\n}\n\n# Notes\n\n- Focus primarily on factual accuracy and semantic similarity, not writing style or phrasing differences.\n- Identify specific differences rather than making general assessments.\n- Pay special attention to dates, numbers, names, locations, and causal relationships when present.\n- Consider the significance of each difference in the context of the overall information.\n- Be consistent in your scoring approach across different evaluations.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.8,
+      "position": [
+        1888,
+        464
+      ],
+      "id": "c2b0a69e-1b11-4696-915f-d288849ee8fa",
+      "name": "Evaluation"
+    }
+  ],
+  "pinData": {
+    "When fetching a dataset row": [
+      {
+        "json": {
+          "row_number": 2,
+          "Input": "What are Apple’s primary product categories listed in its 2024 Form 10-K?",
+          "Expected Answer": "Apple lists iPhone, Mac, iPad, Wearables Home and Accessories, and Services as its primary product categories. (From Apple 10-K)",
+          "Score": ""
+        }
+      }
+    ],
+    "Create File Store": [
+      {
+        "json": {
+          "name": "fileSearchStores/youtubedemo-zmdmtktgxhit",
+          "displayName": "youtube-demo",
+          "createTime": "2025-11-28T07:39:10.847865Z",
+          "updateTime": "2025-11-28T07:39:10.847865Z"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Upload File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Create File Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload File": {
+      "main": [
+        [
+          {
+            "node": "Import File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When fetching a dataset row": {
+      "main": [
+        [
+          {
+            "node": "Eval Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Evaluation",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "RAG Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "RAG Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Eval Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knowledge Base1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Eval Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knowledge Base": {
+      "ai_tool": [
+        [
+          {
+            "node": "RAG Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eval Agent": {
+      "main": [
+        [
+          {
+            "node": "Evaluation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluation": {
+      "main": [
+        [
+          {
+            "node": "Set Metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "be8bfb6c-63bd-4acd-af62-23ffbc5ec722",
+  "meta": {
+    "instanceId": "c44f02648f60c70af8391dd57a132887570eea012ba1fcbc529125f9ff77ebcd"
+  },
+  "id": "3We1Z6G51t1xRq1x",
+  "tags": []
+}
