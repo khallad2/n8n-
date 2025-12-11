@@ -1,0 +1,119 @@
+{
+  "name": "RiddleGenerator",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=",
+        "options": {
+          "systemMessage": "Your are a master of riddles and you are smart.\neverytime generate an easy riddle to be solved in 1 minute, and generate the answer for the riddle  "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "801a8db7-9d36-412c-96b7-fd5c218e0c58",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "path": "b9c4eb10-1564-48f0-9f36-cd0ec213d85d",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        112,
+        0
+      ],
+      "id": "66726d39-f295-4c99-88bc-796a20275fdf",
+      "name": "Webhook",
+      "webhookId": "b9c4eb10-1564-48f0-9f36-cd0ec213d85d"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        784,
+        0
+      ],
+      "id": "8c43c9af-8977-4b80-9024-962d3ae5de15",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        288,
+        208
+      ],
+      "id": "8270118c-deff-422e-8666-535a4c344fd2",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "Y89uMJDGhd1Nl04F",
+          "name": "OpenRouter account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "versionId": "d419af28-b4a0-441d-ab8c-dfc3e311e9a8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fc28b337cc14ad1e67a2942bfbab5db5b33a0dac030694a30441ef9ebbd984f1"
+  },
+  "id": "yxcb2mkX5cWXCLCe",
+  "tags": []
+}
