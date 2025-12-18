@@ -1,0 +1,52 @@
+🔗 رابط التوثيق الرسمي (Documentation):
+https://docs.n8n.io/hosting/installation/docker/#updating
+
+📝 الأوامر المستخدمة في الشرح (Commands)
+
+1. إدارة المساحة وتنظيف الخادم (في حال عدم وجود مساحة كافية)
+للتحقق من المساحة المتاحة وتنظيف الملفات غير الضرورية والحاويات القديمة:
+
+# التحقق من المساحة
+df -h
+
+# تنظيف شامل لنظام Docker
+sudo docker system prune -a
+
+# تنظيف ملفات النظام المؤقتة
+sudo apt-get clean
+sudo apt-get autoremove
+
+2. سحب أحدث نسخة من n8n
+لجلب آخر تحديث مستقر من المستودع الرسمي:
+sudo docker pull docker.n8n.io/n8nio/n8n
+
+3. إيقاف وإزالة الحاوية القديمة
+لمعرفة رقم الحاوية (Container ID) ثم إيقافها وحذفها:
+
+# عرض الحاويات الحالية للحصول على الـ ID
+sudo docker ps -a 
+# إيقاف الحاوية (استبدل <container_id> بالرقم الظاهر لديك)
+docker stop <container_id>
+# حذف الحاوية القديمة
+docker rm <container_id>
+
+4. إعداد متغير النطاق (Domain Setup)
+# التحقق من القيمة الحالية
+echo "$DOMAIN"
+
+للتأكد من أن النطاق (Domain) معرف بشكل صحيح قبل التشغيل:
+# إذا كانت القيمة فارغة، قم بتعريف النطاق (استبدل الرابط بنطاقك الخاص)
+export DOMAIN="subdomain.domain.com"
+
+5. تشغيل حاوية n8n الجديدة
+الأمر النهائي لتشغيل النسخة المحدثة مع ربط المنافذ وإعدادات الويب هوك (Webhooks):
+sudo docker run -d --name n8n \
+  --restart unless-stopped \
+  -p 127.0.0.1:5678:5678 \
+  -e N8N_HOST="$DOMAIN" \
+  -e N8N_PROTOCOL="https" \
+  -e N8N_PORT="5678" \
+  -e N8N_EDITOR_BASE_URL="https://$DOMAIN/" \
+  -e WEBHOOK_URL="https://$DOMAIN/" \
+  -v n8n_data:/home/node/.n8n \
+  docker.n8n.io/n8nio/n8n:latest
